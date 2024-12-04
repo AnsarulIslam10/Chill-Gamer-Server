@@ -26,7 +26,7 @@ async function run() {
     await client.connect();
 
     const reviewCollection = client.db('reviewDB').collection('reviews')
-    const wishlistCollection = client.db('reviewDB').collection('wishlist')
+    const watchlistCollection = client.db('reviewDB').collection('watchlist')
 
     app.get('/reviews', async(req, res)=>{
       const cursor = reviewCollection.find();
@@ -80,10 +80,17 @@ async function run() {
       res.send(result);
     })
 
-    // wishlist
-    app.post('/wishlistReview', async(req, res)=>{
-      const newWishlistReview = req.body;
-      const result = await wishlistCollection.insertOne(newWishlistReview);
+    // Watchlist
+    app.get('/myWatchlist', async(req, res)=>{
+      const {email} = req.query;
+      const query = {email: email};
+      const watchlist= await watchlistCollection.find(query).toArray()
+      res.send(watchlist)
+    })
+
+    app.post('/myWatchlist', async(req, res)=>{
+      const newWatchlist = req.body;
+      const result = await watchlistCollection.insertOne(newWatchlist);
       res.send(result)
     })
     
