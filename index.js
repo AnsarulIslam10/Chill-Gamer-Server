@@ -27,6 +27,12 @@ async function run() {
 
     const reviewCollection = client.db('reviewDB').collection('reviews')
 
+    app.get('/reviews', async(req, res)=>{
+      const cursor = reviewCollection.find();
+      const result = await cursor.toArray();
+      res.send(result)
+    })
+
     app.post('/reviews', async(req, res)=>{
       const newReview = req.body;
       console.log(newReview)
