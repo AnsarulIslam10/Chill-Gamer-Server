@@ -26,6 +26,7 @@ async function run() {
     await client.connect();
 
     const reviewCollection = client.db('reviewDB').collection('reviews')
+    const wishlistCollection = client.db('reviewDB').collection('wishlist')
 
     app.get('/reviews', async(req, res)=>{
       const cursor = reviewCollection.find();
@@ -79,6 +80,13 @@ async function run() {
       res.send(result);
     })
 
+    // wishlist
+    app.post('/wishlistReview', async(req, res)=>{
+      const newWishlistReview = req.body;
+      const result = await wishlistCollection.insertOne(newWishlistReview);
+      res.send(result)
+    })
+    
     // delete
     app.delete('/review/:id', async(req, res)=>{
       const id = req.params.id;
