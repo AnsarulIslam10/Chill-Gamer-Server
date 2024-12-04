@@ -54,6 +54,12 @@ async function run() {
       res.send(result)
     })
 
+    app.get('/highestRatedGames', async(req, res)=>{
+      const games = await reviewCollection.find().sort({rating: -1}).limit(6).toArray();
+      res.send(games)
+    })
+
+    
     // update
     app.get('/updateReview/:id', async(req, res)=>{
       const id = req.params.id;
