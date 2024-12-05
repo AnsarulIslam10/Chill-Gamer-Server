@@ -27,7 +27,7 @@ async function run() {
 
     const reviewCollection = client.db("reviewDB").collection("reviews");
     const watchlistCollection = client.db("reviewDB").collection("watchlist");
-
+    const trendingCollection = client.db("reviewDB").collection("trendingGames");
     app.get("/reviews", async (req, res) => {
       const cursor = reviewCollection.find();
       const result = await cursor.toArray();
@@ -123,6 +123,13 @@ async function run() {
       res.send(result);
     });
 
+    // trending
+    app.get("/trendingGames", async (req, res) => {
+      const cursor = trendingCollection.find();
+      const result = await cursor.toArray();
+      res.send(result);
+    });
+    
     // delete
     app.delete("/review/:id", async (req, res) => {
       const id = req.params.id;
