@@ -78,7 +78,7 @@ async function run() {
 
     app.get("/highestRatedGames", async (req, res) => {
       const games = await reviewCollection
-        .find()
+        .find({rating: {$gte: 0, $lte: 5}})
         .sort({ rating: -1 })
         .limit(6)
         .toArray();
