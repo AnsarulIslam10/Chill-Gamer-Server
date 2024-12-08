@@ -27,32 +27,32 @@ async function run() {
 
     const reviewCollection = client.db("reviewDB").collection("reviews");
     const watchlistCollection = client.db("reviewDB").collection("watchlist");
-    const trendingCollection = client.db("reviewDB").collection("trendingGames");
+    const trendingCollection = client
+      .db("reviewDB")
+      .collection("trendingGames");
     const newsCollection = client.db("reviewDB").collection("latestGameNews");
 
     app.get("/reviews", async (req, res) => {
-      const cursor = reviewCollection.find();
-      const result = await cursor.toArray();
-      res.send(result);
-    });
+      const { genre, sortBy } = req.query;
+      let filterBy = {};
+      if (genre && genre !== "All") {
+        filterBy = { genres: genre };
+      }
 
-    app.get("/reviews/sortedReviews", async (req, res) => {
-      const { sortBy } = req.query;
       let sortMethod = {};
       if (sortBy === "rating-ascending") {
-        sortMethod = {rating: 1}
+        sortMethod = { rating: 1 };
       } else if (sortBy === "rating-descending") {
-        sortMethod = {rating: -1}
+        sortMethod = { rating: -1 };
       } else if (sortBy === "year-ascending") {
-        sortMethod = {year: 1}
+        sortMethod = { year: 1 };
       } else if (sortBy === "year-descending") {
-        sortMethod = {year: -1}
+        sortMethod = { year: -1 };
       }
-      const sortedReviews = await reviewCollection
-        .find()
-        .sort(sortMethod)
-        .toArray();
-      res.send(sortedReviews);
+
+      const cursor = reviewCollection.find(filterBy).sort(sortMethod);
+      const result = await cursor.toArray();
+      res.send(result);
     });
 
     app.get("/review/:id", async (req, res) => {
@@ -71,14 +71,13 @@ async function run() {
 
     app.post("/reviews", async (req, res) => {
       const newReview = req.body;
-      console.log(newReview);
       const result = await reviewCollection.insertOne(newReview);
       res.send(result);
     });
 
     app.get("/highestRatedGames", async (req, res) => {
       const games = await reviewCollection
-        .find({rating: {$gte: 0, $lte: 5}})
+        .find()
         .sort({ rating: -1 })
         .limit(6)
         .toArray();
@@ -137,7 +136,7 @@ async function run() {
       const result = await cursor.toArray();
       res.send(result);
     });
-    
+
     // delete
     app.delete("/review/:id", async (req, res) => {
       const id = req.params.id;
