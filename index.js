@@ -79,7 +79,7 @@ async function run() {
       const games = await reviewCollection
         .find()
         .sort({ rating: -1 })
-        .limit(6)
+        .limit(8)
         .toArray();
       res.send(games);
     });
